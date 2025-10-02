@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Завдання для Овсянікова Дмитра</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        td, th {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Виконав: Овсяніков Дмитро</h1>
+    <div id="results"></div>
+    <script>
+        function showResult(message) {
+            const div = document.createElement('div');
+            div.className = 'result';
+            div.innerHTML = message;
+            document.getElementById('results').appendChild(div);
+        }
+        setTimeout(() => {
+            alert("Ласкаво просимо! Натисніть OK");
+            showResult("1) <strong>Hello, Овсяніков Дмитро!</strong>");
+            const userChoice = confirm("Оберіть дію: OK - Так, Скасувати - Ні");
+            if (userChoice) {
+                showResult("2) <strong>Користувач обрав: Кнопку OK</strong>");
+            } else {
+                showResult("2) <strong>Користувач обрав: Кнопку Скасувати</strong>");
+            }
+            const lastDigit = 3; 
+            let tableHTML = `3) <strong>Таблиця множення для числа ${lastDigit}:</strong><br>`;
+            tableHTML += "<table><tr><th>Вираз</th><th>Результат</th></tr>";
+            for (let i = 1; i <= 10; i++) {
+                tableHTML += `<tr><td>${lastDigit} × ${i}</td><td>${lastDigit * i}</td></tr>`;
+            }
+            tableHTML += "</table>";
+            showResult(tableHTML);
+        }, 100);
+    </script>
+</body>
+</html>
