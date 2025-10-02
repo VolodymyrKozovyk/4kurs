@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Buttons</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: #e0e7ff; /* Світло-блакитний фон */
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 25px;
+            background-color: #ff5722; /* Помаранчевий колір */
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #e64a19; /* Темніший помаранчевий при наведенні */
+            transform: scale(1.05); /* Легке збільшення при наведенні */
+        }
+    </style>
+</head>
+<body>
+    <button>Start</button>
+    <button>Info</button>
+    <button>Save</button>
+    <button>Exit</button>
+    <button>Reset</button>
+</body>
+</html>
