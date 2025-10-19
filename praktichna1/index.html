@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Практична робота</title>
+</head>
+<body>
+    <h1>Практична робота</h1>
+    <h2>Завдання 1: Фільтрація товарів</h2>
+    <button onclick="showAvailableProducts()">Показати доступні товари</button>
+    <button onclick="searchProduct()">Знайти товар</button>
+    <div id="result1"></div>
+
+    <h2>Завдання 2: Студенти</h2>
+    <button onclick="showGroupedStudents()">Групувати студентів</button>
+    <button onclick="showSortedStudents()">Сортувати за оцінками</button>
+    <div id="result2"></div>
+
+    <script>
+        // Завдання 1 - Товари
+        var products = [
+            {name: "Ноутбук", category: "Електроніка", price: 25000, inStock: 5},
+            {name: "Мишка", category: "Електроніка", price: 500, inStock: 0},
+            {name: "Книга", category: "Книги", price: 300, inStock: 10},
+            {name: "Стілець", category: "Меблі", price: 1500, inStock: 2},
+            {name: "Телефон", category: "Електроніка", price: 15000, inStock: 0}
+        ];
+
+        function getAvailableProducts() {
+            return products.filter(function(item) {
+                return item.inStock > 0;
+            });
+        }
+
+        function findProductByName(productName) {
+            var result = products.find(function(item) {
+                return item.name === productName;
+            });
+            return result ? result : "Товар не знайдено";
+        }
+
+        function showAvailableProducts() {
+            var available = getAvailableProducts();
+            var html = "<h3>Доступні товари:</h3><ul>";
+            available.forEach(function(product) {
+                html += "<li>" + product.name + " - " + product.price + " грн (в наявності: " + product.inStock + ")</li>";
+            });
+            html += "</ul>";
+            document.getElementById("result1").innerHTML = html;
+        }
+
+        function searchProduct() {
+            var name = prompt("Введіть назву товару:");
+            var product = findProductByName(name);
+            var html = "<h3>Результат пошуку:</h3>";
+            if (typeof product === "string") {
+                html += product;
+            } else {
+                html += "Знайдено: " + product.name + ", Ціна: " + product.price + " грн, В наявності: " + product.inStock;
+            }
+            document.getElementById("result1").innerHTML = html;
+        }
+
+        // Завдання 2 - Студенти
+        var students = [
+            {name: "Іван", age: 20, grade: 85, group: "A"},
+            {name: "Марія", age: 19, grade: 92, group: "B"},
+            {name: "Петро", age: 21, grade: 78, group: "A"},
+            {name: "Олена", age: 20, grade: 95, group: "C"},
+            {name: "Андрій", age: 22, grade: 88, group: "B"}
+        ];
+
+        function groupBy() {
+            var groups = {};
+            for (var i = 0; i < students.length; i++) {
+                var student = students[i];
+                if (!groups[student.group]) {
+                    groups[student.group] = [];
+                }
+                groups[student.group].push(student);
+            }
+            return groups;
+        }
+
+        function sortStudentsByGrade() {
+            var sorted = students.slice();
+            sorted.sort(function(a, b) {
+                return b.grade - a.grade;
+            });
+            return sorted;
+        }
+
+        function showGroupedStudents() {
+            var grouped = groupBy();
+            var html = "<h3>Студенти за групами:</h3>";
+            for (var group in grouped) {
+                html += "<h4>Група " + group + ":</h4><ul>";
+                grouped[group].forEach(function(student) {
+                    html += "<li>" + student.name + " (" + student.age + " років, оцінка: " + student.grade + ")</li>";
+                });
+                html += "</ul>";
+            }
+            document.getElementById("result2").innerHTML = html;
+        }
+
+        function showSortedStudents() {
+            var sorted = sortStudentsByGrade();
+            var html = "<h3>Студенти за оцінками (спадання):</h3><ol>";
+            sorted.forEach(function(student) {
+                html += "<li>" + student.name + " - " + student.grade + " балів (група " + student.group + ")</li>";
+            });
+            html += "</ol>";
+            document.getElementById("result2").innerHTML = html;
+        }
+    </script>
+</body>
+</html>

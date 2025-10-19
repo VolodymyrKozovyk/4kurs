@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Array Methods</title>
+</head>
+<body>
+    <h1>Функції для роботи з масивами</h1>
+    
+    <div>
+        <h2>1. Пошук товарів</h2>
+        <button onclick="showAvailableProducts()">Показати доступні товари</button>
+        <input type="text" id="productName" placeholder="Назва товару">
+        <button onclick="searchProduct()">Знайти товар</button>
+        <div id="productsResult"></div>
+    </div>
+
+    <div>
+        <h2>2. Студенти</h2>
+        <button onclick="showGroupedStudents()">Показати студентів по групах</button>
+        <button onclick="showSortedStudents()">Показати студентів за оцінками</button>
+        <div id="studentsResult"></div>
+    </div>
+
+    <div>
+        <h2>3. Працівники</h2>
+        <button onclick="showAverageSalary()">Показати середню зарплату</button>
+        <button onclick="showMostExperienced()">Показати найдосвідченішого</button>
+        <div id="employeesResult"></div>
+    </div>
+
+    <div>
+        <h2>4. Книги</h2>
+        <button onclick="showUnreadBooks()">Показати непрочитані книги</button>
+        <input type="text" id="authorName" placeholder="Ім'я автора">
+        <button onclick="showAuthorBooks()">Книги автора</button>
+        <button onclick="showTopRatedBooks()">Топ книги</button>
+        <button onclick="markRandomBookAsRead()">Позначити випадкову книгу як прочитану</button>
+        <button onclick="showAverageYear()">Показати середній рік видання</button>
+        <div id="booksResult"></div>
+    </div>
+
+    <div>
+        <h2>5. Курси для навчання</h2>
+        <button onclick="showAllCourses()">Всі курси</button>
+        <button onclick="showCompletedCourses()">Завершені курси</button>
+        <button onclick="showCoursesWithCertificates()">Курси з сертифікатами</button>
+        <button onclick="completeRandomCourse()">Завершити випадковий курс</button>
+        <div id="coursesResult"></div>
+    </div>
+
+    <script>
+        // 1. Масив товарів
+        const products = [
+            { name: "Смартфон", category: "Електроніка", price: 15000, inStock: 8 },
+            { name: "Навушники", category: "Електроніка", price: 2500, inStock: 0 },
+            { name: "Планшет", category: "Електроніка", price: 12000, inStock: 4 },
+            { name: "Диван", category: "Меблі", price: 18000, inStock: 1 },
+            { name: "Телевізор", category: "Електроніка", price: 22000, inStock: 0 }
+        ];
+
+        // 2. Масив студентів
+        const students = [
+            { name: "Олександр", age: 21, grade: 87, group: "ITB-21-1" },
+            { name: "Катерина", age: 20, grade: 94, group: "KH-21-2" },
+            { name: "Дмитро", age: 22, grade: 76, group: "ITB-21-1" },
+            { name: "Софія", age: 19, grade: 91, group: "KH-21-2" },
+            { name: "Максим", age: 23, grade: 82, group: "PM-21-3" }
+        ];
+
+        // 3. Масив працівників
+        const employees = [
+            { name: "Володимир", position: "Інженер", salary: 28000, years: 4 },
+            { name: "Наталія", position: "Архітектор", salary: 32000, years: 6 },
+            { name: "Артем", position: "Керівник", salary: 40000, years: 8 },
+            { name: "Юлія", position: "Аналітик", salary: 26000, years: 3 },
+            { name: "Ігор", position: "Інженер", salary: 30000, years: 5 }
+        ];
+
+        // 4. Масив книг з методом markAsRead
+        const books = [
+            { 
+                title: "Війна і мир", 
+                author: "Лев Толстой", 
+                year: 1869, 
+                rating: 4.8, 
+                isRead: true,
+                markAsRead: function() { this.isRead = true; }
+            },
+            { 
+                title: "1984", 
+                author: "Джордж Орвелл", 
+                year: 1949, 
+                rating: 4.5, 
+                isRead: false,
+                markAsRead: function() { this.isRead = true; }
+            },
+            { 
+                title: "Злочин і кара", 
+                author: "Федір Достоєвський", 
+                year: 1866, 
+                rating: 4.7, 
+                isRead: true,
+                markAsRead: function() { this.isRead = true; }
+            },
+            { 
+                title: "Гаррі Поттер", 
+                author: "Джоан Роулінг", 
+                year: 1997, 
+                rating: 4.9, 
+                isRead: false,
+                markAsRead: function() { this.isRead = true; }
+            },
+            { 
+                title: "Майстер і Маргарита", 
+                author: "Михайло Булгаков", 
+                year: 1967, 
+                rating: 4.6, 
+                isRead: true,
+                markAsRead: function() { this.isRead = true; }
+            },
+            { 
+                title: "Тисяча сонць", 
+                author: "Халед Хоссейні", 
+                year: 2007, 
+                rating: 4.3, 
+                isRead: false,
+                markAsRead: function() { this.isRead = true; }
+            }
+        ];
+
+        // 5. Масив курсів для навчання
+        const courses = [
+            {
+                name: "JavaScript Basics",
+                platform: "Coursera",
+                duration: 40,
+                isCompleted: true,
+                hasCertificate: true
+            },
+            {
+                name: "React Development",
+                platform: "Udemy",
+                duration: 60,
+                isCompleted: false,
+                hasCertificate: false
+            },
+            {
+                name: "Python for Data Science",
+                platform: "edX",
+                duration: 80,
+                isCompleted: true,
+                hasCertificate: true
+            },
+            {
+                name: "Web Design Fundamentals",
+                platform: "Coursera",
+                duration: 45,
+                isCompleted: false,
+                hasCertificate: false
+            },
+            {
+                name: "Node.js Backend",
+                platform: "Udemy",
+                duration: 55,
+                isCompleted: true,
+                hasCertificate: false
+            }
+        ];
+
+        // 1. Функції для товарів
+        function getAvailableProducts() {
+            return products.filter(product => product.inStock > 0);
+        }
+
+        function findProductByName(productName) {
+            return products.find(product => product.name === productName) || "Товар не знайдено";
+        }
+
+        function showAvailableProducts() {
+            const result = getAvailableProducts();
+            document.getElementById('productsResult').innerHTML = 
+                `<h3>Доступні товари:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        function searchProduct() {
+            const productName = document.getElementById('productName').value;
+            const result = findProductByName(productName);
+            document.getElementById('productsResult').innerHTML = 
+                `<h3>Результат пошуку:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        // 2. Функції для студентів
+        function groupBy(studentsArray) {
+            return studentsArray.reduce((groups, student) => {
+                if (!groups[student.group]) groups[student.group] = [];
+                groups[student.group].push(student);
+                return groups;
+            }, {});
+        }
+
+        function sortStudentsByGrade(studentsArray) {
+            return [...studentsArray].sort((a, b) => b.grade - a.grade);
+        }
+
+        function showGroupedStudents() {
+            const result = groupBy(students);
+            document.getElementById('studentsResult').innerHTML = 
+                `<h3>Студенти по групах:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        function showSortedStudents() {
+            const result = sortStudentsByGrade(students);
+            document.getElementById('studentsResult').innerHTML = 
+                `<h3>Студенти за оцінками:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        // 3. Функції для працівників
+        function getAverageSalary() {
+            const total = employees.reduce((sum, employee) => sum + employee.salary, 0);
+            return total / employees.length;
+        }
+
+        function findMostExperiencedEmployee() {
+            return employees.reduce((mostExp, employee) => 
+                employee.years > mostExp.years ? employee : mostExp
+            );
+        }
+
+        function showAverageSalary() {
+            const result = getAverageSalary();
+            document.getElementById('employeesResult').innerHTML = 
+                `<h3>Середня зарплата: ${result.toFixed(2)} грн</h3>`;
+        }
+
+        function showMostExperienced() {
+            const result = findMostExperiencedEmployee();
+            document.getElementById('employeesResult').innerHTML = 
+                `<h3>Найдосвідченіший працівник:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        // 4. Функції для книг
+        function getUnreadBooks() {
+            return books.filter(book => !book.isRead).map(book => book.title);
+        }
+
+        function getBooksByAuthor(authorName) {
+            return books
+                .filter(book => book.author === authorName)
+                .sort((a, b) => a.year - b.year);
+        }
+
+        function getTopRatedBooks() {
+            return books
+                .filter(book => book.rating > 4)
+                .sort((a, b) => b.rating - a.rating);
+        }
+
+        function calculateAverageYear() {
+            const total = books.reduce((sum, book) => sum + book.year, 0);
+            return Math.round(total / books.length);
+        }
+
+        function markRandomBookAsRead() {
+            const unreadBooks = books.filter(book => !book.isRead);
+            if (unreadBooks.length > 0) {
+                const randomBook = unreadBooks[Math.floor(Math.random() * unreadBooks.length)];
+                randomBook.markAsRead();
+                document.getElementById('booksResult').innerHTML = 
+                    `<h3>Книга "${randomBook.title}" позначена як прочитана!</h3>`;
+            } else {
+                document.getElementById('booksResult').innerHTML = 
+                    `<h3>Всі книги вже прочитані!</h3>`;
+            }
+        }
+
+        function showUnreadBooks() {
+            const result = getUnreadBooks();
+            document.getElementById('booksResult').innerHTML = 
+                `<h3>Непрочитані книги:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        function showAuthorBooks() {
+            const authorName = document.getElementById('authorName').value;
+            const result = getBooksByAuthor(authorName);
+            document.getElementById('booksResult').innerHTML = 
+                `<h3>Книги автора ${authorName}:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        function showTopRatedBooks() {
+            const result = getTopRatedBooks();
+            document.getElementById('booksResult').innerHTML = 
+                `<h3>Топ книги:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        function showAverageYear() {
+            const result = calculateAverageYear();
+            document.getElementById('booksResult').innerHTML = 
+                `<h3>Середній рік видання: ${result}</h3>`;
+        }
+
+        // 5. Функції для курсів
+        function getCompletedCourses() {
+            return courses.filter(course => course.isCompleted);
+        }
+
+        function getCoursesWithCertificates() {
+            return courses.filter(course => course.hasCertificate);
+        }
+
+        function completeRandomCourse() {
+            const incompleteCourses = courses.filter(course => !course.isCompleted);
+            if (incompleteCourses.length > 0) {
+                const randomCourse = incompleteCourses[Math.floor(Math.random() * incompleteCourses.length)];
+                randomCourse.isCompleted = true;
+                document.getElementById('coursesResult').innerHTML = 
+                    `<h3>Курс "${randomCourse.name}" завершено!</h3>`;
+            } else {
+                document.getElementById('coursesResult').innerHTML = 
+                    `<h3>Всі курси вже завершені!</h3>`;
+            }
+        }
+
+        function showAllCourses() {
+            document.getElementById('coursesResult').innerHTML = 
+                `<h3>Всі курси:</h3><pre>${JSON.stringify(courses, null, 2)}</pre>`;
+        }
+
+        function showCompletedCourses() {
+            const result = getCompletedCourses();
+            document.getElementById('coursesResult').innerHTML = 
+                `<h3>Завершені курси:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+
+        function showCoursesWithCertificates() {
+            const result = getCoursesWithCertificates();
+            document.getElementById('coursesResult').innerHTML = 
+                `<h3>Курси з сертифікатами:</h3><pre>${JSON.stringify(result, null, 2)}</pre>`;
+        }
+    </script>
+</body>
+</html>

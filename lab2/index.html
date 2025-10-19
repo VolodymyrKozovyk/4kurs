@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторна 2</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .task { margin: 30px 0; padding: 15px; border: 1px solid #ccc; }
+        button { padding: 10px; margin: 5px; background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Лабораторна робота №2 - Виконав: Студент 1</h1>
+
+    <div class="task">
+        <h3>Завдання 1: Привітання</h3>
+        <button onclick="task1()">Виконати</button>
+        <p id="result1"></p>
+    </div>
+
+    <div class="task">
+        <h3>Завдання 2: Рік народження</h3>
+        <button onclick="task2()">Виконати</button>
+        <p id="result2"></p>
+    </div>
+
+    <div class="task">
+        <h3>Завдання 3: Повне ім'я</h3>
+        <button onclick="task3()">Виконати</button>
+        <p id="result3"></p>
+    </div>
+
+    <script>
+        function task1() {
+            let name = prompt("Введіть ваше ім'я:");
+            if (name) {
+                alert(`Hello, ${name}! Welcome to JavaScript`);
+                document.getElementById('result1').textContent = `Привітали користувача: ${name}`;
+            }
+        }
+
+        function task2() {
+            let age = prompt("Введіть ваш вік:");
+            if (age) {
+                let year = new Date().getFullYear() - age;
+                alert(`You were born in ${year}`);
+                document.getElementById('result2').textContent = `Рік народження: ${year}`;
+            }
+        }
+
+        function task3() {
+            let first = prompt("Введіть ім'я:");
+            let last = prompt("Введіть прізвище:");
+            if (first && last) {
+                let fullName = "Your full name is " + first + " " + last;
+                console.log(fullName);
+                document.getElementById('result3').textContent = `Повне ім'я: ${first} ${last}`;
+            }
+        }
+    </script>
+</body>
+</html>

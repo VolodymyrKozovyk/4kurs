@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Лабораторна 3</title>
+</head>
+<body>
+    <div>
+        <h3>Завдання 1: Повне ім'я та вік</h3>
+        <button onclick="runTask1()">Виконати</button>
+        <p id="result1"></p>
+    </div>
+
+    <div>
+        <h3>Завдання 2: Оцінка студента</h3>
+        <button onclick="runTask2()">Виконати</button>
+        <p id="result2"></p>
+    </div>
+
+    <div>
+        <h3>Завдання 3: Чайові</h3>
+        <button onclick="runTask3()">Виконати</button>
+        <p id="result3"></p>
+    </div>
+
+    <script>
+        // Завдання 1
+        function getFullName(firstName, lastName) {
+            return firstName + " " + lastName;
+        }
+
+        function showGreeting(fullName, age) {
+            return "Hello, " + fullName + "! You are " + age + " years old.";
+        }
+
+        function runTask1() {
+            var firstName = prompt("Введіть ім'я:");
+            var lastName = prompt("Введіть прізвище:");
+            var age = prompt("Введіть вік:");
+            
+            if (firstName && lastName && age) {
+                var fullName = getFullName(firstName, lastName);
+                var message = showGreeting(fullName, age);
+                alert(message);
+                document.getElementById('result1').innerHTML = message;
+            }
+        }
+
+        // Завдання 2
+        function getStudentInfo() {
+            var name = prompt("Введіть ім'я студента:");
+            var score = prompt("Введіть бал (0-12):");
+            return {name: name, score: parseInt(score)};
+        }
+
+        function checkGrade(score) {
+            if (score >= 10 && score <= 12) return "Excellent";
+            if (score >= 7 && score <= 9) return "Good";
+            if (score >= 4 && score <= 6) return "Satisfactory";
+            return "Fail";
+        }
+
+        function showResult(name, grade) {
+            return "Student: " + name + "\nGrade: " + grade;
+        }
+
+        function runTask2() {
+            var student = getStudentInfo();
+            if (student.name && student.score) {
+                var grade = checkGrade(student.score);
+                var result = showResult(student.name, grade);
+                alert(result);
+                document.getElementById('result2').innerHTML = result.replace("\n", "<br>");
+            }
+        }
+
+        // Завдання 3
+        function calculateTip(amount, percent = 10) {
+            return amount * percent / 100;
+        }
+
+        function showResult(amount, tip) {
+            var total = amount + tip;
+            return "Bill: " + amount + " грн\nTip (10%): " + tip + " грн\nTotal: " + total + " грн";
+        }
+
+        function runTask3() {
+            var amount = parseFloat(prompt("Введіть суму рахунку:"));
+            if (amount) {
+                var tip = calculateTip(amount);
+                var result = showResult(amount, tip);
+                alert(result);
+                document.getElementById('result3').innerHTML = result.replace(/\n/g, "<br>");
+            }
+        }
+    </script>
+</body>
+</html>
