@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин Телевізорів</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>TV Shop</h1>
+        <div class="cart-icon-container" onclick="checkCart()">
+            🛒 <span id="cart-count">0</span>
+        </div>
+    </header>
+
+    <main>
+        <h2>Наші пропозиції</h2>
+        <div id="products-container" class="products-grid">
+            </div>
+    </main>
+
+    <div id="modal-quantity" class="modal">
+        <div class="modal-content">
+            <h3>Вкажіть кількість:</h3>
+            <input type="number" id="qty-input" value="1" min="1">
+            <div class="modal-buttons">
+                <button onclick="confirmAddToCart()">Додати</button>
+                <button class="cancel" onclick="closeModal('modal-quantity')">Скасувати</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-success" class="modal">
+        <div class="modal-content">
+            <h3>Товар додано!</h3>
+            <div class="modal-buttons">
+                <button onclick="window.location.href='cart.html'">Перейти у корзину</button>
+                <button class="cancel" onclick="closeModal('modal-success')">Повернутись до покупок</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-empty" class="modal">
+        <div class="modal-content">
+            <h3>Корзина пуста :(</h3>
+            <button class="cancel" onclick="closeModal('modal-empty')">Зрозуміло</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

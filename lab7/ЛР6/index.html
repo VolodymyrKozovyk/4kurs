@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>ЛР 8 - Варіант 11</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e1e; color: #d4d4d4; padding: 20px; }
+        
+        /* ЧАСТИНА 1: ВКЛАДКИ */
+        #tabs { width: 400px; margin-bottom: 40px; }
+        #tabs .tab {
+            display: inline-block;
+            padding: 8px 15px;
+            cursor: pointer;
+            position: relative;
+            z-index: 5;
+            background-color: #2e2e2e;
+            color: #ccc;
+            border: 1px solid #3c3c3c;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            transition: background-color 0.3s;
+        }
+        #tabs .tab:hover { background-color: #3c3c3c; }
+        
+        #tabs .whiteborder {
+            border: 1px solid #007acc;
+            border-bottom: 1px solid #1e1e1e; /* Колір фону, щоб приховати нижню рамку контейнера */
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        
+        #tabs .tabContent {
+            width: 380px;
+            height: 100px;
+            border: 1px solid #007acc;
+            position: relative;
+            padding: 20px;
+            top: -1px;
+            z-index: 1;
+            background-color: #1e1e1e;
+            border-radius: 0 5px 5px 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #tabs .hide { display: none; }
+        #tabs .show { display: block; }
+
+        /* ЧАСТИНА 2: ГЕНЕРАТОР */
+        .generator-container { background-color: #252526; padding: 30px; border-radius: 10px; width: 400px; }
+        .property-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #444; }
+        .prop-tab { padding: 10px 15px; cursor: pointer; color: #7f8c8d; }
+        .prop-tab.active { border-bottom: 3px solid #007acc; color: #007acc; font-weight: bold; }
+        
+        .controls-group { margin-bottom: 25px; border: 1px solid #3c3c3c; padding: 15px; border-radius: 5px; }
+        .control-row { display: flex; align-items: center; margin-bottom: 10px; }
+        .control-row label { width: 150px; font-size: 14px; }
+        
+        input[type="range"] { flex-grow: 1; margin-right: 10px; height: 10px; }
+        input[type="text"] { width: 50px; padding: 5px; background: #3c3c3c; border: 1px solid #555; color: white; }
+        
+        #block { width: 100px; height: 100px; background: #27ae60; margin-top: 20px; float: left; margin-right: 20px; }
+        #cssCode { width: 100%; height: 100px; background: #3c3c3c; border: 1px solid #555; color: #c3c3c3; font-family: monospace; padding: 10px; resize: none; }
+    </style>
+</head>
+<body>
+
+    <h2>1. Вкладки на сторінці</h2>
+    <div id="tabs">
+        <div class="tab whiteborder">Tab 1</div>
+        <div class="tab">Tab 2</div>
+        <div class="tab">Tab 3</div>
+
+        <div class="tabContent show">Вміст вкладки 1</div>
+        <div class="tabContent hide">Вміст вкладки 2</div>
+        <div class="tabContent hide">Вміст вкладки 3</div>
+    </div>
+    
+    <hr>
+    
+    <h2>2. CSS3 Генератор (Border-radius, Margin, Max-height)</h2>
+    <div class="generator-container">
+        
+        <div class="property-tabs" id="propTabs">
+            <div class="prop-tab active" data-prop="radius">border-radius</div>
+            <div class="prop-tab" data-prop="margin">margin</div>
+            <div class="prop-tab" data-prop="maxh">max-height</div>
+        </div>
+
+        <div id="controlsContainer">
+            </div>
+
+        <div style="overflow: hidden;">
+            <div id="block"></div>
+            <textarea id="cssCode" placeholder="Тут генерується CSS-код..."></textarea>
+        </div>
+    </div>
+
+<script>
+// --- ЧАСТИНА 1: ВКЛАДКИ ---
+
+let tab; 
+let tabContent; 
+
+// Функція приховування
+function hideTabsContent(a) {
+    for (let i = a; i < tabContent.length; i++) {
+        tabContent[i].classList.remove('show');
+        tabContent[i].classList.add("hide");
+        tab[i].classList.remove('whiteborder');
+    }
+}
+
+// Функція відображення
+function showTabsContent(b) {
+    // Перевіряється наявність у блоку класу hide
+    if (tabContent[b].classList.contains('hide')) {
+        hideTabsContent(0); // Приховує всі блоки
+        tab[b].classList.add('whiteborder'); // Активній вкладці додається клас whiteborder
+        tabContent[b].classList.remove('hide'); // Видаляється клас hide
+        tabContent[b].classList.add('show'); // Додається клас show
+    }
+}
+
+window.onload = function() {
+    tabContent = document.getElementsByClassName('tabContent'); // Отримання блоків з контентом
+    tab = document.getElementsByClassName('tab'); // Отримання заголовків вкладок
+    
+    // Приховування вкладок при першому завантаженні
+    hideTabsContent(1); 
+    
+    // Обробка кліку по вкладках
+    document.getElementById('tabs').onclick = function(event) {
+        let target = event.target;
+        
+        if (target.className.includes('tab')) {
+            for (let i = 0; i < tab.length; i++) {
+                if (target == tab[i]) {
+                    showTabsContent(i);
+                    break;
+                }
+            }
+        }
+    };
+    
+    // Обробка вкладок генератора
+    document.getElementById('propTabs').addEventListener('click', function(e) {
+        if (e.target.classList.contains('prop-tab')) {
+            document.querySelectorAll('.prop-tab').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            currentProperty = e.target.getAttribute('data-prop');
+            createControls();
+            generate();
+        }
+    });
+    
+    // Ініціалізація генератора
+    createControls();
+    generate();
+};
+
+// --- ЧАСТИНА 2: CSS ГЕНЕРАТОР (РІВЕНЬ 2) ---
+
+let currentProperty = 'radius';
+const controls = {
+    // Border Radius
+    radius: [
+        { id: 'rtl', label: 'Верхній лівий радіус:', max: 100, val: 25 },
+        { id: 'rtr', label: 'Верхній правий радіус:', max: 100, val: 12 },
+        { id: 'rbr', label: 'Нижній правий радіус:', max: 100, val: 56 },
+        { id: 'rbl', label: 'Нижній лівий радіус:', max: 100, val: 67 }
+    ],
+    // Margin (Завдання 2, Властивість 11)
+    margin: [
+        { id: 'mt', label: 'Margin Top:', max: 50, val: 10 },
+        { id: 'mr', label: 'Margin Right:', max: 50, val: 15 },
+        { id: 'mb', label: 'Margin Bottom:', max: 50, val: 10 },
+        { id: 'ml', label: 'Margin Left:', max: 50, val: 15 }
+    ],
+    // Max-height (Завдання 2, Властивість 12)
+    maxh: [
+        { id: 'mh', label: 'Max Height (px):', max: 300, val: 150 }
+    ]
+};
+
+function createControls() {
+    const container = document.getElementById('controlsContainer');
+    container.innerHTML = '';
+    
+    const currentControlSet = controls[currentProperty];
+    const group = document.createElement('div');
+    group.classList.add('controls-group');
+    
+    currentControlSet.forEach(ctrl => {
+        const row = document.createElement('div');
+        row.classList.add('control-row');
+        
+        row.innerHTML = `
+            <label for="${ctrl.id}">${ctrl.label}</label>
+            <input type="range" id="r_${ctrl.id}" min="0" max="${ctrl.max}" value="${ctrl.val}" oninput="generate()">
+            <input type="text" id="t_${ctrl.id}" value="${ctrl.val}" oninput="updateRangeFromText(this, 'r_${ctrl.id}')">
+        `;
+        group.appendChild(row);
+    });
+    container.appendChild(group);
+}
+
+function updateRangeFromText(textInput, rangeId) {
+    const rangeInput = document.getElementById(rangeId);
+    const value = parseInt(textInput.value) || 0;
+    
+    // Забезпечення меж
+    const max = parseInt(rangeInput.max);
+    rangeInput.value = Math.min(Math.max(0, value), max);
+    generate();
+}
+
+function generate() {
+    const block = document.getElementById('block');
+    const cssCode = document.getElementById('cssCode');
+    let css = '';
+
+    // 1. Оновлення значень input type="text" зі значень повзунків
+    controls[currentProperty].forEach(ctrl => {
+        const rVal = document.getElementById(`r_${ctrl.id}`).value;
+        document.getElementById(`t_${ctrl.id}`).value = rVal;
+    });
+
+    // 2. Генерація CSS та застосування стилів
+    if (currentProperty === 'radius') {
+        const rtl = document.getElementById('r_rtl').value;
+        const rtr = document.getElementById('r_rtr').value;
+        const rbr = document.getElementById('r_rbr').value;
+        const rbl = document.getElementById('r_rbl').value;
+        
+        css = `border-radius: ${rtl}px ${rtr}px ${rbr}px ${rbl}px;`;
+        
+        // Застосування стилю до блоку
+        block.style.borderRadius = `${rtl}px ${rtr}px ${rbr}px ${rbl}px`; 
+        block.style.margin = '20px'; // Скидаємо інші стилі
+        block.style.maxHeight = '100px';
+    
+    } else if (currentProperty === 'margin') {
+        const mt = document.getElementById('r_mt').value;
+        const mr = document.getElementById('r_mr').value;
+        const mb = document.getElementById('r_mb').value;
+        const ml = document.getElementById('r_ml').value;
+        
+        css = `margin: ${mt}px ${mr}px ${mb}px ${ml}px;`;
+        
+        block.style.margin = `${mt}px ${mr}px ${mb}px ${ml}px`;
+        block.style.borderRadius = '0';
+        block.style.maxHeight = '100px';
+        
+    } else if (currentProperty === 'maxh') {
+        const mh = document.getElementById('r_mh').value;
+        
+        css = `max-height: ${mh}px;`;
+        
+        block.style.maxHeight = `${mh}px`;
+        block.style.margin = '20px';
+        block.style.borderRadius = '0';
+    }
+
+    // 3. Виведення коду в textarea
+    cssCode.value = css;
+}
+</script>
+</body>
+</html>

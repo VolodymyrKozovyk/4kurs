@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторна 7 (Варіант 11)</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .task-box { border: 1px solid #ccc; padding: 15px; margin-bottom: 25px; border-radius: 5px; }
+        h3 { color: #004d99; border-bottom: 1px solid #004d99; padding-bottom: 5px; }
+        input { padding: 5px; border: 1px solid #aaa; border-radius: 3px; }
+        .score-info { font-weight: bold; }
+        .error-msg { color: red; }
+        .correct-msg { color: green; }
+        .nav-link { margin: 0 10px; text-decoration: none; font-weight: bold; color: #004d99; }
+        .nav-link[style*="hidden"] { visibility: hidden !important; }
+    </style>
+</head>
+<body>
+
+    <div id="task1-container" class="task-box">
+        <h3>1. Конвертер температур (ООП)</h3>
+        <label for="fahrenheit">Температура за Фаренгейтом (F):</label>
+        <input type="number" id="fahrenheit" value="32">
+        <br><br>
+        <label for="celsius">Температура за Цельсієм (C):</label>
+        <input type="number" id="celsius" value="0">
+    </div>
+    
+    <div id="task2-container" class="task-box">
+        <h3>2 & 3. Перевірка таблиці множення (Радіокнопки)</h3>
+        <div id="score3" class="score-info"></div>
+        <button onclick="quiz3.nextQuestion()">Наступне завдання</button>
+        <p id="question3"></p>
+        <div id="options3"></div>
+        <p id="result3"></p>
+    </div>
+
+    <div id="rotator" class="task-box">
+        <h3>4. Ротатор зображень: Чоловічий одяг</h3>
+    </div>
+
+    <div id="task5-container" class="task-box">
+        <h3>5. CAPTCHA</h3>
+        <p>Введіть число:</p>
+        <div id="captcha-display" style="display: flex; font-size: 24px; margin-bottom: 10px;"></div>
+        <input type="number" id="captcha-input" style="width: 100px;">
+        <button onclick="checkCaptcha()">Перевірити CAPTCHA</button>
+        <p id="captcha-result"></p>
+    </div>
+
+<script>
+// --- Завдання 1: Конвертер температур ---
+class TempConverter {
+    constructor(fId, cId) {
+        this.fInput = document.getElementById(fId);
+        this.cInput = document.getElementById(cId);
+        this.fInput.addEventListener('input', () => this.handleInput('F'));
+        this.cInput.addEventListener('input', () => this.handleInput('C'));
+    }
+
+    toCelsius(f) { return (5 / 9) * (f - 32); }
+    toFahrenheit(c) { return (c * 9 / 5) + 32; }
+
+    handleInput(source) {
+        if (source === 'F') {
+            const F = parseFloat(this.fInput.value);
+            if (!isNaN(F)) this.cInput.value = this.toCelsius(F).toFixed(2);
+        } else if (source === 'C') {
+            const C = parseFloat(this.cInput.value);
+            if (!isNaN(C)) this.fInput.value = this.toFahrenheit(C).toFixed(2);
+        }
+    }
+}
+const converter = new TempConverter('fahrenheit', 'celsius');
+
+// --- Завдання 2 & 3: Тест множення (Радіокнопки) ---
+class QuizApp {
+    constructor(questionId, resultId, scoreId, optionsId) {
+        this.correctCount = 0;
+        this.totalCount = 0;
+        this.correctAnswer = 0;
+        this.questionEl = document.getElementById(questionId);
+        this.resultEl = document.getElementById(resultId);
+        this.scoreEl = document.getElementById(scoreId);
+        this.optionsEl = document.getElementById(optionsId);
+        this.attemptMade = false;
+    }
+
+    generateQuestion() {
+        this.attemptMade = false;
+        const a = Math.floor(Math.random() * 9) + 2;
+        const b = Math.floor(Math.random() * 9) + 2;
+        this.correctAnswer = a * b;
+        this.questionEl.textContent = `${a} × ${b} =`;
+        this.resultEl.textContent = '';
+        this.resultEl.removeAttribute('class');
+        this.generateOptions();
+    }
+
+    generateOptions() {
+        const answers = new Set([this.correctAnswer]);
+        while (answers.size < 4) {
+            let fakeAnswer = Math.floor(Math.random() * 81) + 4;
+            if (fakeAnswer !== this.correctAnswer) answers.add(fakeAnswer);
+        }
+        
+        const answersArray = Array.from(answers).sort(() => Math.random() - 0.5);
+        this.optionsEl.innerHTML = '';
+
+        answersArray.forEach((answer) => {
+            const label = document.createElement('label');
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'q3_answer';
+            radio.value = answer;
+            radio.addEventListener('change', () => this.checkRadioAnswer(radio));
+            
+            label.appendChild(radio);
+            label.appendChild(document.createTextNode(answer));
+            this.optionsEl.appendChild(label);
+            this.optionsEl.appendChild(document.createElement('br'));
+        });
+    }
+    
+    checkRadioAnswer(radio) {
+        if (this.attemptMade) return; 
+
+        this.totalCount++;
+        this.attemptMade = true;
+        const userAnswer = parseInt(radio.value);
+
+        if (userAnswer === this.correctAnswer) {
+            this.correctCount++;
+            this.resultEl.textContent = 'Правильно!';
+            this.resultEl.classList.add('correct-msg');
+        } else {
+            this.resultEl.textContent = `Помилка, правильна відповідь «${this.correctAnswer}»`;
+            this.resultEl.classList.add('error-msg');
+        }
+        this.updateScore();
+        
+        Array.from(this.optionsEl.querySelectorAll('input[type="radio"]')).forEach(r => r.disabled = true);
+    }
+    
+    nextQuestion() {
+        this.generateQuestion();
+    }
+
+    updateScore() {
+        const percentage = this.totalCount === 0 ? 0 : Math.round((this.correctCount / this.totalCount) * 100);
+        this.scoreEl.textContent = `Загальний рахунок ${percentage}% (${this.correctCount} правильних відповідей з ${this.totalCount})`;
+    }
+}
+const quiz3 = new QuizApp('question3', 'result3', 'score3', 'options3');
+quiz3.updateScore();
+quiz3.generateQuestion();
+
+
+// --- Завдання 4: Ротатор зображень (Чоловічий одяг) ---
+let imagesArray11 = [
+    {path: 'images/clothing_001.jpg', title: 'Класичний костюм', description: 'Стильний темно-синій костюм для офіційних зустрічей.'},
+    {path: 'images/clothing_002.jpg', title: 'Casual Look', description: 'Джинси та світшот для повсякденного носіння.'},
+    {path: 'images/clothing_003.jpg', title: 'Пальто осіннє', description: 'Вовняне пальто кольору кемел для холодної погоди.'}
+]; 
+
+function initPhotoRotator(containerId, imagesArray) {
+    const container = document.getElementById(containerId);
+    let currentIndex = 0;
+
+    const counter = document.createElement('p');
+    const image = document.createElement('img');
+    const imageContainer = document.createElement('div');
+    const title = document.createElement('h4');
+    const description = document.createElement('p');
+    const prevLink = document.createElement('a');
+    const nextLink = document.createElement('a');
+    
+    imageContainer.style.textAlign = 'center';
+    imageContainer.style.width = '100%';
+    imageContainer.style.height = '400px';
+    imageContainer.style.overflow = 'hidden'; 
+    imageContainer.style.display = 'flex';
+    imageContainer.style.justifyContent = 'space-around';
+    imageContainer.style.alignItems = 'center';
+    
+    image.style.maxWidth = '80%';
+    image.style.maxHeight = '100%';
+    
+    prevLink.textContent = '« Назад';
+    nextLink.textContent = 'Вперед »';
+    prevLink.classList.add('nav-link');
+    nextLink.classList.add('nav-link');
+    
+    prevLink.href = 'javascript:void(0)';
+    nextLink.href = 'javascript:void(0)';
+
+    const render = () => {
+        const item = imagesArray[currentIndex];
+        image.src = item.path;
+        title.textContent = item.title;
+        description.textContent = item.description;
+        counter.textContent = `Фотографія ${currentIndex + 1} з ${imagesArray.length}`; 
+
+        // Логіка приховування посилань
+        prevLink.style.visibility = currentIndex === 0 ? 'hidden' : 'visible'; 
+        nextLink.style.visibility = currentIndex === imagesArray.length - 1 ? 'hidden' : 'visible';
+    };
+
+    prevLink.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; render(); } });
+    nextLink.addEventListener('click', () => { if (currentIndex < imagesArray.length - 1) { currentIndex++; render(); } });
+
+    imageContainer.appendChild(image);
+    
+    container.appendChild(counter);
+    container.appendChild(document.createElement('hr'));
+    container.appendChild(imageContainer);
+    container.appendChild(document.createElement('br'));
+    
+    const navBar = document.createElement('div');
+    navBar.style.textAlign = 'center';
+    navBar.appendChild(prevLink);
+    navBar.appendChild(nextLink);
+    container.appendChild(navBar);
+    
+    container.appendChild(title);
+    container.appendChild(description);
+
+    render();
+}
+
+// Запускаємо ротатор
+initPhotoRotator('rotator', imagesArray11);
+
+
+// --- Завдання 5: CAPTCHA ---
+let correctCaptcha = '';
+
+function initializeCaptcha(numDigits) {
+    let captchaString = '';
+    for (let i = 0; i < numDigits; i++) {
+        captchaString += Math.floor(Math.random() * 10).toString();
+    }
+    correctCaptcha = captchaString;
+    const displayEl = document.getElementById('captcha-display');
+    displayEl.innerHTML = '';
+
+    for (const char of captchaString) {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.marginRight = '10px';
+        span.style.padding = '5px';
+        span.style.border = '1px solid #000';
+        span.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+        span.style.display = 'inline-block';
+        span.style.backgroundColor = `hsl(${Math.random() * 360}, 50%, 80%)`;
+        displayEl.appendChild(span);
+    }
+}
+
+function checkCaptcha() {
+    const userInput = document.getElementById('captcha-input').value;
+    const resultEl = document.getElementById('captcha-result');
+
+    if (userInput === correctCaptcha) {
+        resultEl.textContent = 'Успіх!';
+        resultEl.classList.add('correct-msg');
+        resultEl.classList.remove('error-msg');
+    } else {
+        resultEl.textContent = 'Помилка';
+        resultEl.classList.add('error-msg');
+        resultEl.classList.remove('correct-msg');
+    }
+    initializeCaptcha(4); 
+    document.getElementById('captcha-input').value = '';
+}
+
+initializeCaptcha(4);
+</script>
+</body>
+</html>

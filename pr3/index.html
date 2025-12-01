@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Date API - Версія A (Повний)</title>
+    <style>
+        body { font-family: monospace; background-color: #f7f7f7; color: #333; padding: 20px; }
+        .task-box { border: 1px solid #c678dd; padding: 15px; margin-bottom: 20px; border-radius: 5px; background: white; }
+        h3 { color: #61afef; border-bottom: 1px solid #61afef; padding-bottom: 5px; }
+        .result { margin-top: 10px; padding: 5px; background-color: #e9e9e9; border-left: 3px solid #e5c07b; }
+        button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>JavaScript Date API</h1>
+    
+    <div class="task-box">
+        <h3>1. Створення конкретної дати</h3>
+        <div id="date1_output" class="result"></div>
+    </div>
+
+    <div class="task-box">
+        <h3>2. Визначення дня тижня</h3>
+        <p>Дата 3.01.2012: <span id="weekday_output" class="result"></span></p>
+    </div>
+
+    <div class="task-box">
+        <h3>3. Останній день місяця</h3>
+        <p>2020 рік, Лютий: <span id="lastday_output" class="result"></span></p>
+    </div>
+    
+    <div class="task-box">
+        <h3>4. Секунди до завтра</h3>
+        <p>До завтра залишилось: <span id="seconds_output" class="result"></span></p>
+    </div>
+
+    <div class="task-box">
+        <h3>5. Форматування дати (Relative time)</h3>
+        <p>50 секунд тому: <span id="format_sec_output" class="result"></span></p>
+        <p>1 година тому: <span id="format_hour_output" class="result"></span></p>
+    </div>
+
+<script>
+// --- Завдання 1: Створення конкретної дати ---
+const specificDate = new Date(2021, 1, 20, 3, 12, 0, 0); // 20 лютого 2021, 3:12 ранку
+document.getElementById('date1_output').textContent = specificDate.toLocaleString(); [cite_start]// [cite: 869, 870, 772]
+
+// --- Завдання 2: getWeekDay(date) ---
+function getWeekDay(date) {
+    const days = ['НД', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']; [cite_start]// [cite: 871, 509]
+    return days[date.getDay()]; [cite_start]// [cite: 509]
+}
+const testDate2 = new Date(2012, 0, 3); [cite_start]// 3 січня 2012 - ВТ [cite: 873]
+document.getElementById('weekday_output').textContent = getWeekDay(testDate2); [cite_start]// [cite: 874, 875]
+
+// --- Завдання 3: getLastDayOfMonth(year, month) ---
+function getLastDayOfMonth(year, month) {
+    // Встановлюємо дату на 0 день наступного місяця. [cite_start]Це автоматично перекидає на останній день поточного. [cite: 553, 572, 876, 880]
+    const date = new Date(year, month + 1, 0); 
+    return date.getDate(); [cite_start]// [cite: 504]
+}
+document.getElementById('lastday_output').textContent = getLastDayOfMonth(2020, 1); [cite_start]// 1 = Лютий [cite: 881, 882]
+
+// --- Завдання 4: getSecondsToTomorrow() ---
+function getSecondsToTomorrow() {
+    const now = new Date(); [cite_start]// Поточний час [cite: 455]
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); [cite_start]// Дата завтра, 00:00:00 [cite: 560, 561]
+    const diffMs = tomorrow - now; [cite_start]// Різниця в мілісекундах [cite: 577]
+    return Math.floor(diffMs / 1000); // Результат в секундах
+}
+document.getElementById('seconds_output').textContent = getSecondsToTomorrow() + ' сек.'; [cite_start]// [cite: 883, 885]
+
+// --- Завдання 5: formatDate(date) ---
+function formatDate(date) {
+    const msDiff = Date.now() - date.getTime(); [cite_start]// Різниця в мілісекундах [cite: 577, 524]
+    const seconds = Math.floor(msDiff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    
+    if (seconds < 1) return "прямо зараз"; [cite_start]// Менше 1 секунди [cite: 887]
+    if (minutes < 1) return `${seconds} сек. назад`; [cite_start]// Менше 1 хвилини [cite: 888]
+    if (minutes < 60) return `${minutes} хв. назад`; [cite_start]// Менше 1 години [cite: 889]
+
+    // Повна дата у форматі "DD. MM. YY HH:mm"
+    const d = date.getDate().toString().padStart(2, '0'); [cite_start]// [cite: 890, 504]
+    const m = (date.getMonth() + 1).toString().padStart(2, '0'); [cite_start]// Місяці від 0 до 11 [cite: 890, 486]
+    const y = date.getFullYear().toString().slice(-2);
+    const h = date.getHours().toString().padStart(2, '0'); [cite_start]// [cite: 890, 505]
+    const min = date.getMinutes().toString().padStart(2, '0'); [cite_start]// [cite: 890, 505]
+    
+    return `${d}.${m}.${y} ${h}:${min}`;
+}
+const now = new Date();
+const minuteAgo = new Date(now.getTime() - 50 * 1000);
+const hourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+
+document.getElementById('format_sec_output').textContent = formatDate(minuteAgo);
+document.getElementById('format_hour_output').textContent = formatDate(hourAgo);
+</script>
+</body>
+</html>

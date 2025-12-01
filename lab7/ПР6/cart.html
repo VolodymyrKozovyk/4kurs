@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Ваше замовлення</h1>
+        <a href="index.html" class="back-link">← На головну</a>
+    </header>
+
+    <main>
+        <div id="cart-container">
+            </div>
+        
+        <div class="cart-summary">
+            <h3>Разом до оплати: <span id="total-price">0</span> грн.</h3>
+            <div class="cart-actions">
+                <button onclick="alert('Оплата пройшла успішно!')">Оплатити</button>
+                <button class="cancel" onclick="window.location.href='index.html'">Повернутись до покупок</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

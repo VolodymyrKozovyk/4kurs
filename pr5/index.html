@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>GPS Трекер з Картою - Версія A</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        body { font-family: monospace; background-color: #f0f0f0; color: #333; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        #location-data { border: 1px solid #007acc; padding: 15px; margin-bottom: 15px; background: #fff; }
+        #map { height: 400px; border: 2px solid #007acc; margin-bottom: 20px; }
+        .controls button { padding: 10px 20px; margin-right: 10px; cursor: pointer; background: #007acc; color: white; border: none; border-radius: 4px; }
+        .controls button:disabled { background: #ccc; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>GPS Відстеження (Leaflet)</h1>
+        
+        <div class="controls">
+            <button id="watch">Watch Position</button>
+            <button id="clearWatch">Clear Watch</button>
+        </div>
+
+        <div id="location-data">
+            <div id="location">Your location will go here.</div>
+            <div id="distance">Distance from College (48.94321, 24.73380) will go here.</div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+<script>
+let watchId = null; // Глобальна змінна для watchPosition
+const destinationCoords = { latitude: 48.94321, longitude: 24.73380 }; // Координати Точки X
+
+// Ініціалізація карти Leaflet
+const map = L.map('map').setView([49.0, 24.5], 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+}).addTo(map);
+
+let currentMarker = null; // Маркер поточної позиції
+let historyMarkers = []; // Для збереження історії (Інд. Завд. 5)
+
+// --- Географічні функції ---
+
+function degreesToRadians(degrees) {
+    return (degrees * Math.PI) / 180;
+}
+
+// Завдання 3: Формула Гаверсинуса
+function computeDistance(startCoords, destCoords) {
+    const R = 6371; // Радіус Землі в км
+    const dLat = degreesToRadians(destCoords.latitude - startCoords.latitude);
+    const dLon = degreesToRadians(destCoords.longitude - startCoords.longitude);
+    const lat1 = degreesToRadians(startCoords.latitude);
+    const lat2 = degreesToRadians(destCoords.latitude);
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1) * Math.cos(lat2) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+// --- Обробники Geolocation API ---
+
+function displayLocation(position) {
+    const { latitude, longitude, accuracy } = position.coords;
+    const date = new Date(position.timestamp).toLocaleTimeString();
+    
+    // Частина 1: Вивід координат
+    document.getElementById("location").innerHTML = 
+        `Широта: ${latitude.toFixed(5)}, Довгота: ${longitude.toFixed(5)} (Точність: ${accuracy.toFixed(1)} м)`;
+    
+    // Частина 1: Розрахунок дистанції
+    const km = computeDistance(position.coords, destinationCoords);
+    document.getElementById("distance").innerHTML = 
+        `Ви знаходитесь за ${km.toFixed(3)} км від точки X.`;
+
+    // Індивідуальне завдання 1, 4: Додавання/оновлення маркера
+    const latLng = [latitude, longitude];
+    const popupContent = `<b>You are here:</b> ${latitude.toFixed(4)}, ${longitude.toFixed(4)}<br>Time: ${date}`;
+
+    if (currentMarker) {
+        currentMarker.setLatLng(latLng).bindPopup(popupContent).openPopup();
+    } else {
+        currentMarker = L.marker(latLng).addTo(map).bindPopup(popupContent).openPopup();
+    }
+    map.setView(latLng, 13); // Центрування карти
+    
+    // Індивідуальне завдання 5: Збереження історії (якщо це watchPosition)
+    if (watchId) {
+        const historyMarker = L.circle(latLng, {
+            color: 'blue',
+            fillColor: '#00f',
+            fillOpacity: 0.1,
+            radius: accuracy
+        }).addTo(map).bindPopup(`Time: ${date}`);
+        historyMarkers.push(historyMarker);
+    }
+}
+
+function displayError(error) {
+    const errorTypes = {
+        0: "Unknown error", 1: "Permission denied by user", 
+        2: "Position is not available", 3: "Request timed out"
+    };
+    let errorMessage = errorTypes[error.code] || "Невідома помилка";
+    document.getElementById("location").innerHTML = `<span style="color:red;">Помилка: ${errorMessage}</span>`;
+}
+
+// --- Обробники кнопок (Частина 2: Watch/Clear) ---
+
+function getMyLocation() {
+    if (navigator.geolocation) {
+        // Одноразове отримання при старті
+        navigator.geolocation.getCurrentPosition(displayLocation, displayError);
+        
+        // Підключення обробників кнопок
+        document.getElementById("watch").onclick = watchLocation;
+        document.getElementById("clearWatch").onclick = clearWatch;
+    } else {
+        document.getElementById("location").innerHTML = "Geolocation API не підтримується.";
+    }
+}
+
+function watchLocation() {
+    if (!watchId) {
+        // Частина 2: watchPosition
+        watchId = navigator.geolocation.watchPosition(displayLocation, displayError, { enableHighAccuracy: true });
+        document.getElementById("watch").textContent = "Watching...";
+    }
+}
+
+function clearWatch() {
+    if (watchId) {
+        // Частина 2: clearWatch
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+        document.getElementById("watch").textContent = "Watch Position";
+        alert("Відстеження зупинено.");
+    }
+}
+
+window.onload = getMyLocation;
+
+// Додавання маркера для точки X
+L.marker([destinationCoords.latitude, destinationCoords.longitude]).addTo(map)
+    .bindPopup("Точка X (Коледж)");
+
+</script>
+</body>
+</html>

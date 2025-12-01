@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Асинхронні операції (Promise API)</title>
+    <style>
+        body { font-family: monospace; background-color: #282c34; color: #61afef; padding: 20px; }
+        .task-box { border: 1px solid #c678dd; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        h3 { color: #e5c07b; border-bottom: 1px solid #56b6c2; padding-bottom: 5px; }
+        .loader { display: none; font-size: 1.2em; color: #98c379; margin-top: 10px; }
+        #result { margin-top: 15px; padding: 10px; background-color: #3e4451; border-radius: 3px; white-space: pre-wrap; }
+        button { background-color: #c678dd; color: white; border: none; padding: 8px 15px; border-radius: 3px; cursor: pointer; margin-top: 10px; }
+        input { padding: 5px; border: 1px solid #555; background-color: #3e4451; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>Використання JavaScript Promise API</h1>
+    
+    <div class="task-box">
+        <h3>Завдання 1: Повідомлення через 2с</h3>
+        <button onclick="task1()">Запустити 2-секундну затримку</button>
+    </div>
+
+    <div class="task-box">
+        <h3>Завдання 2: Перевірка числа (Більше чи Менше 10)</h3>
+        <input type="number" id="num_check_input" value="12" style="width: 80px;">
+        <button onclick="task2()">Перевірити число</button>
+    </div>
+
+    <div class="task-box">
+        <h3>Завдання 3: Випадковий час та число</h3>
+        <button onclick="task3()">Створити випадкову асинхронну операцію</button>
+    </div>
+
+    <div id="loader" class="loader">Завантаження....</div>
+    <div id="result"></div>
+
+<script>
+// --- Завдання 0: Функції керування ---
+const loader = document.getElementById('loader');
+const resultDiv = document.getElementById('result');
+
+function showLoader() {
+    resultDiv.textContent = '';
+    loader.style.display = 'block';
+}
+
+function hideLoader(message) {
+    loader.style.display = 'none';
+    resultDiv.textContent = message;
+}
+
+// --- Завдання 1: "Hello, World!" [cite_start]через 2с [cite: 573] ---
+function task1() {
+    showLoader();
+    // Promise виконується через 2 секунди
+    const promise = new Promise(resolve => {
+        setTimeout(() => {
+            resolve("Hello, World!"); 
+        }, 2000);
+    });
+
+    promise
+        .then(result => hideLoader(`[Завдання 1] Успішно: ${result}`))
+        .catch(error => hideLoader(`[Завдання 1] Помилка: ${error}`));
+}
+
+[cite_start]// --- Завдання 2: checkNumber(num) [cite: 575] ---
+function checkNumber(num) {
+    [cite_start]// Повертає Promise [cite: 575]
+    return new Promise((resolve, reject) => {
+        [cite_start]// Якщо num > 10, виконується [cite: 575]
+        if (num > 10) {
+            resolve("Число більше 10");
+        } else {
+            [cite_start]// Інакше відхиляється [cite: 575]
+            reject("Число менше або дорівнює 10");
+        }
+    });
+}
+
+function task2() {
+    const num = parseInt(document.getElementById('num_check_input').value);
+    showLoader();
+
+    checkNumber(num)
+        [cite_start]// Обробка результатів за допомогою then і catch [cite: 576]
+        .then(result => hideLoader(`[Завдання 2] Успіх (Ввід: ${num}): ${result}`))
+        .catch(error => hideLoader(`[Завдання 2] Помилка (Ввід: ${num}): ${error}`));
+}
+
+[cite_start]// --- Завдання 3: randomNumber() [cite: 578] ---
+function randomNumber() {
+    [cite_start]// Повертає Promise [cite: 578]
+    return new Promise(resolve => {
+        [cite_start]// Випадковий час (від 1 до 3 секунд) [cite: 578]
+        const delayMs = Math.floor(Math.random() * 2000) + 1000;
+        [cite_start]// Випадкове число від 1 до 100 [cite: 578]
+        const randomNum = Math.floor(Math.random() * 100) + 1;
+        
+        const startTime = Date.now();
+
+        setTimeout(() => {
+            const endTime = Date.now();
+            const duration = (endTime - startTime) / 1000;
+            [cite_start]// Виводить число та час роботи [cite: 578]
+            resolve(`Випадкове число: ${randomNum}. Час роботи: ${duration.toFixed(2)} с.`);
+        }, delayMs);
+    });
+}
+
+function task3() {
+    showLoader();
+    randomNumber()
+        .then(result => hideLoader(`[Завдання 3] Успіх: ${result}`))
+        .catch(error => hideLoader(`[Завдання 3] Помилка: ${error}`));
+}
+</script>
+</body>
+</html>
